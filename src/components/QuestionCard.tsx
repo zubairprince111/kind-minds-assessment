@@ -56,14 +56,14 @@ const QuestionCard = ({
               <Button
                 key={option.value}
                 variant={selectedAnswer === option.value ? "optionSelected" : "option"}
-                className="w-full"
+                className="w-full h-auto justify-start p-4 text-left"
                 onClick={() => onSelectAnswer(option.value)}
               >
-                <span className="flex items-start gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full border-2 border-current flex items-center justify-center text-xs font-semibold">
+                <span className="flex items-start gap-4">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full border-2 border-current flex items-center justify-center text-xs font-semibold mt-0.5">
                     {option.value}
                   </span>
-                  <span className="text-left">{option.label}</span>
+                  <span className="flex-1 whitespace-normal">{option.label}</span>
                 </span>
               </Button>
             ))}

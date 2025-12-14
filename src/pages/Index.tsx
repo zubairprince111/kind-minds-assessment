@@ -4,7 +4,8 @@ import QuestionCard from "@/components/QuestionCard";
 import ResultScreen from "@/components/ResultScreen";
 import { questions, calculateResult, AssessmentResult } from "@/data/questions";
 import { Helmet } from "react-helmet-async";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/integrations/firebase/client";
+import { addDoc, collection } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 
 type AppState = "welcome" | "assessment" | "result";
@@ -43,37 +44,37 @@ const Index = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const validAnswers = answers.filter((a): a is number => a !== null);
     if (validAnswers.length !== questions.length) return;
 
     setIsSubmitting(true);
-    
+
     // Calculate result
     const assessmentResult = calculateResult(validAnswers);
-    
-    try {
-      // Save anonymous submission to database
-      const { error } = await supabase.from("assessments").insert({
-        score: assessmentResult.score,
-        category: assessmentResult.category,
-        answers: validAnswers,
-      });
 
-      if (error) {
-        console.error("Error saving assessment:", error);
-        toast({
-          title: "Note",
-          description: "Your results are shown below. There was an issue saving your submission.",
-          variant: "destructive",
-        });
-      }
-    } catch (err) {
-      console.error("Error saving assessment:", err);
-    }
-    
+    // Immediately show the user their result
     setResult(assessmentResult);
     setAppState("result");
+
+    // Save the submission in the background
+    addDoc(collection(db, "assessments"), {
+      score: assessmentResult.score,
+      category: assessmentResult.category,
+      answers: validAnswers,
+      createdAt: new Date(),
+    }).catch((err) => {
+      // The user is already on the result screen.
+      // We can show a toast notification if the background save fails.
+      console.error("Error saving assessment:", err);
+      toast({
+        title: "Note",
+        description:
+          "Your results were displayed, but there was an issue saving your submission.",
+        variant: "destructive",
+      });
+    });
+
     setIsSubmitting(false);
   };
 

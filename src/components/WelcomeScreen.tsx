@@ -153,14 +153,14 @@ const WelcomeScreen = ({ onStart }: WelcomeScreenProps) => {
             ].map((item, index) => (
               <motion.div
                 key={item.title}
-                className="group bg-card/80 backdrop-blur-sm rounded-xl p-5 border border-border/50 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-default"
+                className="group bg-card/50 backdrop-blur-md rounded-xl p-5 border border-white/10 shadow-lg hover:shadow-primary/20 hover:border-primary/30 transition-all duration-300 cursor-default"
                 variants={cardVariants}
                 whileHover={{ y: -5, scale: 1.02 }}
                 custom={index}
               >
                 <motion.div 
                   className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300"
-                  whileHover={{ rotate: 10 }}
+                  whileHover={{ rotate: 15, scale: 1.2 }}
                 >
                   <item.icon className="w-6 h-6 text-primary" />
                 </motion.div>
@@ -168,23 +168,6 @@ const WelcomeScreen = ({ onStart }: WelcomeScreenProps) => {
                 <p className="text-sm text-muted-foreground">{item.desc}</p>
               </motion.div>
             ))}
-          </motion.div>
-
-          {/* Disclaimer */}
-          <motion.div 
-            className="bg-card/60 backdrop-blur-sm rounded-xl p-6 border border-border/50 shadow-sm mb-8"
-            variants={itemVariants}
-          >
-            <h2 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              Important Disclaimer
-            </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              This assessment is a screening tool and is <strong className="text-foreground">not a medical diagnosis</strong>. 
-              It is designed to help identify potential symptoms that may warrant professional attention. 
-              If you are experiencing thoughts of self-harm or suicide, please seek immediate help by 
-              contacting a mental health professional or emergency services.
-            </p>
           </motion.div>
 
           {/* CTA Button */}
