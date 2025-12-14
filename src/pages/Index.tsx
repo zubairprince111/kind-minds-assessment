@@ -4,6 +4,8 @@ import QuestionCard from "@/components/QuestionCard";
 import ResultScreen from "@/components/ResultScreen";
 import { questions, calculateResult, AssessmentResult } from "@/data/questions";
 import { Helmet } from "react-helmet-async";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 type AppState = "welcome" | "assessment" | "result";
 
@@ -15,6 +17,7 @@ const Index = () => {
   );
   const [result, setResult] = useState<AssessmentResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleStart = () => {
     setAppState("assessment");
@@ -49,9 +52,25 @@ const Index = () => {
     // Calculate result
     const assessmentResult = calculateResult(validAnswers);
     
-    // TODO: Save to database when Supabase is connected
-    // For now, just simulate a delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      // Save anonymous submission to database
+      const { error } = await supabase.from("assessments").insert({
+        score: assessmentResult.score,
+        category: assessmentResult.category,
+        answers: validAnswers,
+      });
+
+      if (error) {
+        console.error("Error saving assessment:", error);
+        toast({
+          title: "Note",
+          description: "Your results are shown below. There was an issue saving your submission.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error("Error saving assessment:", err);
+    }
     
     setResult(assessmentResult);
     setAppState("result");
